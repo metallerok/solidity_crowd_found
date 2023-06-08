@@ -14,11 +14,13 @@ contract ERC20 is IERC20 {
 
     constructor(uint amount) {
         owner = msg.sender;
-        
-        balanceOf[msg.sender] += amount;
-        totalSupply += amount;
 
-        emit Transfer(address(0), msg.sender, amount);
+        if (amount != 0) {
+            balanceOf[msg.sender] += amount;
+            totalSupply += amount;
+
+            emit Transfer(address(0), msg.sender, amount);
+        }
     }
 
     function transfer(address to, uint256 amount) external returns (bool) {
@@ -40,7 +42,7 @@ contract ERC20 is IERC20 {
 
     function transferFrom(address from, address to, uint256 amount) external returns (bool) {
         allowance[from][msg.sender] -= amount;
-        balanceOf[msg.sender] -= amount;
+        balanceOf[from] -= amount;
         balanceOf[to] += amount;
 
         emit Transfer(from, to, amount);
