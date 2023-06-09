@@ -38,7 +38,7 @@ contract CrowdFound {
     function launch(uint _goal, uint32 _startAt, uint32 _endAt) external {
         require(_startAt >= block.timestamp, "StartAt < now");
         require(_endAt >= _startAt, "EndAt < StartAt");
-        require(_endAt <= block.timestamp + 30 days, "EndAt > compaign duration");
+        require(_endAt <= block.timestamp + 30 days, "EndAt > campaign duration");
 
         campaingsCount += 1;
         campaigns[campaingsCount] = Campaign({
@@ -51,6 +51,28 @@ contract CrowdFound {
         });
 
         emit Launched(campaingsCount, msg.sender, _goal, _startAt, _endAt);
+    }
+
+    function getCampaign(uint _id) external view returns (
+        address creator,
+        uint goal,
+        uint pledged,
+        uint32 startAt,
+        uint32 endAt,
+        bool claimed
+    ) {
+        Campaign memory campaign = campaigns[_id];
+
+        require(campaign.creator != address(0), "Campaign not found");
+
+        return (
+            campaign.creator,
+            campaign.goal,
+            campaign.pledged,
+            campaign.startAt,
+            campaign.endAt,
+            campaign.claimed
+        );
     }
 
     function cancel(uint _id) external {
